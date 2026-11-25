@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة تدريب TIMSS - العلوم للصف الثامن</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #0284c7;
+            --accent: #f59e0b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); margin: 0; padding: 0; line-height: 1.7; }
+        
+        /* Header & Timer */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        header h1 { margin: 0; font-size: 1.4rem; }
+        .timer-box {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* Container */
+        .container { max-width: 900px; margin: 30px auto; padding: 0 15px; }
+        
+        /* Student Info */
+        .student-card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            border-right: 5px solid var(--accent);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .student-card input {
+            flex: 1;
+            min-width: 220px;
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        /* Unit Banners */
+        .unit-banner {
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 40px 0 20px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(30, 58, 138, 0.15);
+        }
+        .unit-badge {
+            background: var(--accent);
+            color: #000;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        /* Question Cards */
+        .q-card {
+            background: var(--card);
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+        }
+        .q-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 15px; color: #0f172a; }
+        
+        /* Options */
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
+        
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+        .option-label:hover { border-color: var(--secondary); background: #f0f9ff; }
+        .option-label input[type="radio"] { accent-color: var(--primary); transform: scale(1.2); }
+        
+        /* Correct/Wrong States */
+        .correct-ans { border-color: var(--success) !important; background-color: #dcfce7 !important; color: #14532d; font-weight: 700; }
+        .wrong-ans { border-color: var(--danger) !important; background-color: #fee2e2 !important; color: #7f1d1d; }
+
+        /* Essay & Inputs */
+        textarea, select, input[type="number"], input[type="text"].short-ans {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 0.95rem;
+        }
+        .sub-q { margin-top: 15px; padding-top: 12px; border-top: 1px dashed var(--border); }
+        .model-answer {
+            display: none;
+            margin-top: 12px;
+            padding: 12px 15px;
+            background: #eff6ff;
+            border-right: 4px solid var(--secondary);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #1e3a8a;
+        }
+
+        /* Tables & Matching */
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: center; }
+        th { background: #e2e8f0; font-weight: 700; }
+
+        /* SVG Graphics */
+        .svg-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        /* Submit & Result */
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--success), #15803d);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+        }
+        .submit-btn:hover { opacity: 0.95; }
+
+        #result-panel {
+            display: none;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border: 3px solid var(--primary);
+            margin-bottom: 30px;
+        }
+        .score-circle {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        .ltr { direction: ltr; display: inline-block; font-family: monospace; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <h1>🔬 منصة تدريب الاختبارات الدولية TIMSS - العلوم (الصف الثامن)</h1>
+        <div class="timer-box">⏱️ الوقت المتبقي: <span id="timer">45:00</span></div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="student-card">
+        <strong>بيانات الطالب:</strong>
+        <input type="text" id="studentName" placeholder="اكتب اسمك الثلاثي هنا لعرضه في النتيجة...">
+    </div>
+
+    <div id="result-panel">
+        <h2>🎉 نتيجة الاختبار الإلكتروني</h2>
+        <p id="res-name" style="font-size: 1.1rem; font-weight: bold;"></p>
+        <div class="score-circle" id="res-score"></div>
+        <p style="color: #475569;">تم تصحيح الأسئلة الموضوعية تلقائياً، وتظهر أسفل كل سؤال مقالي الإجابة النموذجية المعتمدة لمراجعة إجابتك.</p>
+    </div>
+
+    <form id="timssForm">
+
+        <!-- ==================== الوحدة 1 ==================== -->
+        <div class="unit-banner">
+            <span>الوحدة (1): الوراثة والتكاثر</span>
+            <span class="unit-badge">11 سؤالاً</span>
+        </div>
+
+        <!-- س1 -->
+        <div class="q-card" data-q="u1_1" data-ans="ج">
+            <div class="q-title">1. الابن يرث الصفات من:</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="u1_1" value="أ"> أ- أبيه فقط.</label>
+                <label class="option-label"><input type="radio" name="u1_1" value="ب"> ب- أمه فقط.</label>
+                <label class="option-label"><input type="radio" name="u1_1" value="ج"> ج- الاثنين معاً الأب والأم.</label>
+                <label class="option-label"><input type="radio" name="u1_1" value="د"> د- الأب أو الأم لا من الاثنين معاً.</label>
+            </div>
+        </div>
+
+        <!-- س2 -->
+        <div class="q-card" data-q="u1_2" data-ans="ج">
+            <div class="q-title">2. أيُّ الطرائق الآتية أفضل لتحديد صلة القرابة بين شخصين؟</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="u1_2" value="أ"> أ- المقارنة بين فصيلة دم كل منهما.</label>
+                <label class="option-label"><input type="radio" name="u1_2" value="ب"> ب- المقارنة بين خط يد كل منهما.</label>
+                <label class="option-label"><input type="radio" name="u1_2" value="ج"> ج- المقارنة بين جيناتهما.</label>
+                <label class="option-label"><input type="radio" name="u1_2" value="د"> د- المقارنة بين بصمات أصابعهما.</label>
+            </div>
+        </div>
+
+        <!-- س3 -->
+        <div class="q-card" data-q="u1_3" data-ans="ج">
+            <div class="q-title">3. تُنقل الصفات الوراثية في النباتات من جيل إلى جيل عن طريق:</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="u1_3" value="أ"> أ- حبوب اللقاح فقط.</label>
+                <label class="option-label"><input type="radio" name="u1_3" value="ب"> ب- البويضات فقط.</label>
+                <label class="option-label"><input type="radio" name="u1_3" value="ج"> ج- حبوب اللقاح والبويضات.</label>
+                <label class="option-label"><input type="radio" name="u1_3" value="د"> د- أعضاء التكاثر.</label>
